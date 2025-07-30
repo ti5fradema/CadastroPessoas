@@ -13,7 +13,6 @@ namespace CrmArrighi.Data
         public DbSet<PessoaFisica> PessoasFisicas { get; set; }
         public DbSet<PessoaJuridica> PessoasJuridicas { get; set; }
         public DbSet<Endereco> Enderecos { get; set; }
-        public DbSet<Usuario> Usuarios { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -54,29 +53,6 @@ namespace CrmArrighi.Data
             modelBuilder.Entity<PessoaJuridica>()
                 .HasIndex(p => p.Email)
                 .IsUnique();
-
-            // Configurações para Usuario
-            modelBuilder.Entity<Usuario>()
-                .HasIndex(u => u.Login)
-                .IsUnique();
-
-            modelBuilder.Entity<Usuario>()
-                .HasIndex(u => u.Email)
-                .IsUnique();
-
-            // Relacionamento Usuario com PessoaFisica
-            modelBuilder.Entity<Usuario>()
-                .HasOne(u => u.PessoaFisica)
-                .WithMany()
-                .HasForeignKey(u => u.PessoaFisicaId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // Relacionamento Usuario com PessoaJuridica
-            modelBuilder.Entity<Usuario>()
-                .HasOne(u => u.PessoaJuridica)
-                .WithMany()
-                .HasForeignKey(u => u.PessoaJuridicaId)
-                .OnDelete(DeleteBehavior.Restrict);
 
             // Configurações para Endereco
             modelBuilder.Entity<Endereco>()
