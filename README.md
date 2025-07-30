@@ -44,6 +44,22 @@ Sistema de Gerenciamento de Relacionamento com Clientes - Backend API
 - **DataCadastro**: Data de cadastro (automático)
 - **DataAtualizacao**: Data de atualização (automático)
 
+#### Usuario
+- **Id**: Identificador único
+- **Login**: Login do usuário (obrigatório, único)
+- **Email**: E-mail válido (obrigatório, único)
+- **Senha**: Senha do usuário (obrigatório)
+- **GrupoAcesso**: Grupo de acesso do usuário (obrigatório)
+- **TipoPessoa**: Tipo de pessoa ("Fisica" ou "Juridica") (obrigatório)
+- **PessoaFisicaId**: ID da pessoa física (opcional)
+- **PessoaFisica**: Relacionamento com PessoaFisica (opcional)
+- **PessoaJuridicaId**: ID da pessoa jurídica (opcional)
+- **PessoaJuridica**: Relacionamento com PessoaJuridica (opcional)
+- **Ativo**: Status ativo do usuário (automático)
+- **DataCadastro**: Data de cadastro (automático)
+- **DataAtualizacao**: Data de atualização (automático)
+- **UltimoAcesso**: Data do último acesso (automático)
+
 #### Endereco
 - **Id**: Identificador único
 - **Cidade**: Cidade (obrigatório)
@@ -160,6 +176,78 @@ Atualiza uma pessoa jurídica existente.
 #### DELETE /api/PessoaJuridica/{id}
 Remove uma pessoa jurídica.
 
+### Usuário
+
+#### GET /api/Usuario
+Retorna todos os usuários cadastrados.
+
+#### GET /api/Usuario/{id}
+Retorna um usuário específico pelo ID.
+
+#### GET /api/Usuario/pessoas-fisicas
+Retorna uma lista de pessoas físicas disponíveis para associação com usuários.
+
+**Exemplo de resposta:**
+```json
+[
+  {
+    "id": 1,
+    "nome": "João Silva",
+    "cpf": "123.456.789-00",
+    "email": "joao@email.com"
+  }
+]
+```
+
+#### GET /api/Usuario/pessoas-juridicas
+Retorna uma lista de pessoas jurídicas disponíveis para associação com usuários.
+
+**Exemplo de resposta:**
+```json
+[
+  {
+    "id": 1,
+    "razaoSocial": "Empresa LTDA",
+    "nomeFantasia": "Empresa",
+    "cnpj": "12.345.678/0001-90",
+    "email": "contato@empresa.com"
+  }
+]
+```
+
+#### POST /api/Usuario
+Cria um novo usuário.
+
+**Exemplo de requisição para Pessoa Física:**
+```json
+{
+  "login": "joao.silva",
+  "email": "joao@email.com",
+  "senha": "senha123",
+  "grupoAcesso": "Administrador",
+  "tipoPessoa": "Fisica",
+  "pessoaFisicaId": 1
+}
+```
+
+**Exemplo de requisição para Pessoa Jurídica:**
+```json
+{
+  "login": "empresa.ltda",
+  "email": "contato@empresa.com",
+  "senha": "senha123",
+  "grupoAcesso": "Cliente",
+  "tipoPessoa": "Juridica",
+  "pessoaJuridicaId": 1
+}
+```
+
+#### PUT /api/Usuario/{id}
+Atualiza um usuário existente.
+
+#### DELETE /api/Usuario/{id}
+Remove um usuário.
+
 ### Endereço
 
 #### GET /api/Endereco
@@ -214,11 +302,13 @@ A API está configurada para aceitar requisições de qualquer origem (CORS), pe
 
 - CPF e CNPJ são únicos no sistema
 - E-mails são únicos no sistema
+- Login de usuário é único no sistema
 - Validação de formato de e-mail
 - Campos obrigatórios são validados
 - Relacionamentos entre entidades são mantidos
 - **Responsável Técnico**: Deve ser uma pessoa física já cadastrada no sistema
 - **Exclusão de Pessoa Física**: Não é permitida se ela for responsável técnico de alguma pessoa jurídica
+- **Usuário**: Deve estar associado a uma pessoa física ou jurídica válida
 
 ## Funcionalidades Implementadas
 
@@ -237,6 +327,16 @@ A API está configurada para aceitar requisições de qualquer origem (CORS), pe
 - ✅ Listar todas
 - ✅ Buscar por ID
 - ✅ Relacionamento obrigatório com Pessoa Física (Responsável Técnico)
+
+### Usuário
+- ✅ Criar
+- ✅ Editar
+- ✅ Excluir
+- ✅ Listar todos
+- ✅ Buscar por ID
+- ✅ Listar pessoas físicas disponíveis
+- ✅ Listar pessoas jurídicas disponíveis
+- ✅ Associação com Pessoa Física ou Jurídica
 
 ### Endereço
 - ✅ Criar

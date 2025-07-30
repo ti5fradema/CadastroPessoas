@@ -134,3 +134,4 @@ C:\Users\Mauro Benetti\cadastro-pessoas\CadastroPessoas\obj\Debug\net8.0\refint\
 C:\Users\Mauro Benetti\cadastro-pessoas\CadastroPessoas\obj\Debug\net8.0\CadastroPessoas.pdb
 C:\Users\Mauro Benetti\cadastro-pessoas\CadastroPessoas\obj\Debug\net8.0\CadastroPessoas.genruntimeconfig.cache
 C:\Users\Mauro Benetti\cadastro-pessoas\CadastroPessoas\obj\Debug\net8.0\ref\CadastroPessoas.dll
+C:\Users\Mauro Benetti\cadastro-pessoas\CadastroPessoas\obj\Debug\net8.0\CadastroPessoas.sourcelink.json
