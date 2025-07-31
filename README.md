@@ -1,228 +1,191 @@
 # CRM Arrighi - API Backend
 
-Sistema de Gerenciamento de Relacionamento com Clientes - Backend API
+## 📋 Descrição
+Sistema CRM desenvolvido em C# com .NET 8, utilizando ASP.NET Core Web API e Entity Framework Core para gerenciamento de pessoas físicas, jurídicas e usuários.
 
-## Tecnologias Utilizadas
+## 🏗️ Arquitetura
 
-- .NET 8
-- Entity Framework Core
-- SQL Server
-- ASP.NET Core Web API
+### Tecnologias Utilizadas
+- **.NET 8**
+- **ASP.NET Core Web API**
+- **Entity Framework Core**
+- **SQL Server / Azure SQL Database**
+- **CORS habilitado para frontend**
 
-## Estrutura do Projeto
-
-### Modelos (Models)
-
-#### PessoaFisica
-- **Id**: Identificador único
-- **Nome**: Nome completo (obrigatório)
-- **Email**: E-mail válido (obrigatório, único)
-- **Codinome**: Apelido (opcional)
-- **Sexo**: Sexo (obrigatório)
-- **DataNascimento**: Data de nascimento (obrigatório)
-- **EstadoCivil**: Estado civil (obrigatório)
-- **Cpf**: CPF (obrigatório, único)
-- **Rg**: RG (opcional)
-- **Cnh**: CNH (opcional)
-- **Telefone1**: Telefone principal (obrigatório)
-- **Telefone2**: Telefone secundário (opcional)
-- **Endereco**: Relacionamento com Endereco (obrigatório)
-- **DataCadastro**: Data de cadastro (automático)
-- **DataAtualizacao**: Data de atualização (automático)
-
-#### PessoaJuridica
-- **Id**: Identificador único
-- **RazaoSocial**: Razão social (obrigatório)
-- **NomeFantasia**: Nome fantasia (opcional)
-- **Cnpj**: CNPJ (obrigatório, único)
-- **ResponsavelTecnicoId**: ID da pessoa física responsável (obrigatório)
-- **ResponsavelTecnico**: Relacionamento com PessoaFisica (obrigatório)
-- **Email**: E-mail válido (obrigatório, único)
-- **Telefone1**: Telefone principal (obrigatório)
-- **Telefone2**: Telefone secundário (opcional)
-- **Endereco**: Relacionamento com Endereco (obrigatório)
-- **DataCadastro**: Data de cadastro (automático)
-- **DataAtualizacao**: Data de atualização (automático)
-
-#### Usuario
-- **Id**: Identificador único
-- **Login**: Login do usuário (obrigatório, único)
-- **Email**: E-mail válido (obrigatório, único)
-- **Senha**: Senha do usuário (obrigatório)
-- **GrupoAcesso**: Grupo de acesso do usuário (obrigatório)
-- **TipoPessoa**: Tipo de pessoa ("Fisica" ou "Juridica") (obrigatório)
-- **PessoaFisicaId**: ID da pessoa física (opcional)
-- **PessoaFisica**: Relacionamento com PessoaFisica (opcional)
-- **PessoaJuridicaId**: ID da pessoa jurídica (opcional)
-- **PessoaJuridica**: Relacionamento com PessoaJuridica (opcional)
-- **Ativo**: Status ativo do usuário (automático)
-- **DataCadastro**: Data de cadastro (automático)
-- **DataAtualizacao**: Data de atualização (automático)
-- **UltimoAcesso**: Data do último acesso (automático)
-
-#### Endereco
-- **Id**: Identificador único
-- **Cidade**: Cidade (obrigatório)
-- **Bairro**: Bairro (obrigatório)
-- **Logradouro**: Logradouro (obrigatório)
-- **Cep**: CEP (obrigatório)
-- **Numero**: Número (obrigatório)
-- **Complemento**: Complemento (opcional)
-
-## Endpoints da API
-
-### Pessoa Física
-
-#### GET /api/PessoaFisica
-Retorna todas as pessoas físicas cadastradas.
-
-#### GET /api/PessoaFisica/{id}
-Retorna uma pessoa física específica pelo ID.
-
-#### GET /api/PessoaFisica/responsaveis-tecnicos
-Retorna uma lista simplificada de pessoas físicas disponíveis para serem responsáveis técnicos.
-
-**Exemplo de resposta:**
-```json
-[
-  {
-    "id": 1,
-    "nome": "João Silva",
-    "cpf": "123.456.789-00",
-    "email": "joao@email.com"
-  },
-  {
-    "id": 2,
-    "nome": "Maria Santos",
-    "cpf": "987.654.321-00",
-    "email": "maria@email.com"
-  }
-]
+### Estrutura do Projeto
+```
+CadastroPessoas/
+├── Controllers/          # Controllers da API
+├── Models/              # Modelos de dados
+├── Data/                # Contexto do Entity Framework
+├── Migrations/          # Migrações do banco de dados
+└── Properties/          # Configurações do projeto
 ```
 
-#### POST /api/PessoaFisica
-Cria uma nova pessoa física.
+## 🗄️ Modelos de Dados
 
-**Exemplo de requisição:**
+### PessoaFisica
+- **Id**: Chave primária
+- **Nome**: Nome completo (obrigatório, max 200 chars)
+- **Email**: Email único (obrigatório, max 150 chars)
+- **Codinome**: Nome alternativo (opcional, max 100 chars)
+- **Sexo**: Masculino/Feminino/Outro (obrigatório)
+- **DataNascimento**: Data de nascimento (obrigatório)
+- **EstadoCivil**: Estado civil (obrigatório)
+- **Cpf**: CPF único (obrigatório, 14 chars)
+- **Rg**: RG (opcional, max 20 chars)
+- **Cnh**: CNH (opcional, max 20 chars)
+- **Telefone1**: Telefone principal (obrigatório, max 15 chars)
+- **Telefone2**: Telefone secundário (opcional, max 15 chars)
+- **EnderecoId**: Relacionamento com Endereco (obrigatório)
+- **DataCadastro**: Data de criação automática
+- **DataAtualizacao**: Data de última atualização
+
+### PessoaJuridica
+- **Id**: Chave primária
+- **RazaoSocial**: Razão social (obrigatório, max 200 chars)
+- **NomeFantasia**: Nome fantasia (opcional, max 200 chars)
+- **Cnpj**: CNPJ único (obrigatório, 18 chars)
+- **ResponsavelTecnicoId**: Relacionamento com PessoaFisica (obrigatório)
+- **Email**: Email único (obrigatório, max 150 chars)
+- **Telefone1**: Telefone principal (obrigatório, max 15 chars)
+- **Telefone2**: Telefone secundário (opcional, max 15 chars)
+- **EnderecoId**: Relacionamento com Endereco (obrigatório)
+- **DataCadastro**: Data de criação automática
+- **DataAtualizacao**: Data de última atualização
+
+### Endereco
+- **Id**: Chave primária
+- **Cidade**: Cidade (obrigatório, max 100 chars)
+- **Bairro**: Bairro (obrigatório, max 100 chars)
+- **Logradouro**: Logradouro (obrigatório, max 200 chars)
+- **Cep**: CEP (obrigatório, 9 chars)
+- **Numero**: Número (obrigatório, max 10 chars)
+- **Complemento**: Complemento (opcional, max 100 chars)
+
+### Usuario
+- **Id**: Chave primária
+- **Login**: Login único (obrigatório, max 50 chars)
+- **Email**: Email único (obrigatório, max 150 chars)
+- **Senha**: Senha (obrigatório, max 100 chars)
+- **GrupoAcesso**: Grupo de acesso (obrigatório, max 50 chars)
+- **TipoPessoa**: "Fisica" ou "Juridica" (obrigatório)
+- **PessoaFisicaId**: Relacionamento opcional com PessoaFisica
+- **PessoaJuridicaId**: Relacionamento opcional com PessoaJuridica
+- **Ativo**: Status ativo/inativo (padrão: true)
+- **DataCadastro**: Data de criação automática
+- **DataAtualizacao**: Data de última atualização
+- **UltimoAcesso**: Data do último acesso
+
+## 🔗 Relacionamentos
+
+### PessoaFisica ↔ Endereco
+- **Tipo**: One-to-One
+- **Comportamento**: Cascade Delete
+- **Restrição**: Uma PessoaFisica deve ter um Endereco
+
+### PessoaJuridica ↔ Endereco
+- **Tipo**: One-to-One
+- **Comportamento**: Cascade Delete
+- **Restrição**: Uma PessoaJuridica deve ter um Endereco
+
+### PessoaJuridica ↔ PessoaFisica (Responsável Técnico)
+- **Tipo**: Many-to-One
+- **Comportamento**: Restrict Delete
+- **Restrição**: Uma PessoaJuridica deve ter um Responsável Técnico (PessoaFisica)
+
+### Usuario ↔ PessoaFisica
+- **Tipo**: One-to-One (opcional)
+- **Comportamento**: Restrict Delete
+- **Restrição**: Usuário pode ser associado a uma PessoaFisica
+
+### Usuario ↔ PessoaJuridica
+- **Tipo**: One-to-One (opcional)
+- **Comportamento**: Restrict Delete
+- **Restrição**: Usuário pode ser associado a uma PessoaJuridica
+
+## 🚀 Endpoints da API
+
+### PessoaFisica
+- `GET /api/PessoaFisica` - Listar todas as pessoas físicas
+- `GET /api/PessoaFisica/{id}` - Obter pessoa física por ID
+- `POST /api/PessoaFisica` - Criar nova pessoa física
+- `PUT /api/PessoaFisica/{id}` - Atualizar pessoa física
+- `DELETE /api/PessoaFisica/{id}` - Excluir pessoa física
+- `GET /api/PessoaFisica/responsaveis-tecnicos` - Listar responsáveis técnicos
+
+### PessoaJuridica
+- `GET /api/PessoaJuridica` - Listar todas as pessoas jurídicas
+- `GET /api/PessoaJuridica/{id}` - Obter pessoa jurídica por ID
+- `POST /api/PessoaJuridica` - Criar nova pessoa jurídica
+- `PUT /api/PessoaJuridica/{id}` - Atualizar pessoa jurídica
+- `DELETE /api/PessoaJuridica/{id}` - Excluir pessoa jurídica
+
+### Endereco
+- `GET /api/Endereco` - Listar todos os endereços
+- `GET /api/Endereco/{id}` - Obter endereço por ID
+- `POST /api/Endereco` - Criar novo endereço
+- `PUT /api/Endereco/{id}` - Atualizar endereço
+- `DELETE /api/Endereco/{id}` - Excluir endereço
+
+### Usuario
+- `GET /api/Usuario` - Listar todos os usuários
+- `GET /api/Usuario/{id}` - Obter usuário por ID
+- `POST /api/Usuario` - Criar novo usuário
+- `PUT /api/Usuario/{id}` - Atualizar usuário
+- `DELETE /api/Usuario/{id}` - Excluir usuário
+- `GET /api/Usuario/pessoas-fisicas` - Listar pessoas físicas para associação
+- `GET /api/Usuario/pessoas-juridicas` - Listar pessoas jurídicas para associação
+
+## 📝 Exemplos de Uso
+
+### Criar Pessoa Física
 ```json
+POST /api/PessoaFisica
 {
   "nome": "João Silva",
   "email": "joao@email.com",
-  "codinome": "João",
+  "cpf": "123.456.789-00",
   "sexo": "Masculino",
   "dataNascimento": "1990-01-01",
   "estadoCivil": "Solteiro",
-  "cpf": "123.456.789-00",
-  "rg": "12.345.678-9",
-  "cnh": "12345678901",
   "telefone1": "(11) 99999-9999",
-  "telefone2": "(11) 88888-8888",
   "endereco": {
     "cidade": "São Paulo",
     "bairro": "Centro",
     "logradouro": "Rua das Flores",
     "cep": "01234-567",
-    "numero": "123",
-    "complemento": "Apto 45"
+    "numero": "123"
   }
 }
 ```
 
-#### PUT /api/PessoaFisica/{id}
-Atualiza uma pessoa física existente.
-
-#### DELETE /api/PessoaFisica/{id}
-Remove uma pessoa física.
-
-**Observação:** Não é possível excluir uma pessoa física se ela for responsável técnico de alguma pessoa jurídica.
-
-### Pessoa Jurídica
-
-#### GET /api/PessoaJuridica
-Retorna todas as pessoas jurídicas cadastradas.
-
-#### GET /api/PessoaJuridica/{id}
-Retorna uma pessoa jurídica específica pelo ID.
-
-#### POST /api/PessoaJuridica
-Cria uma nova pessoa jurídica.
-
-**Exemplo de requisição:**
+### Criar Pessoa Jurídica
 ```json
+POST /api/PessoaJuridica
 {
   "razaoSocial": "Empresa LTDA",
   "nomeFantasia": "Empresa",
   "cnpj": "12.345.678/0001-90",
   "responsavelTecnicoId": 1,
   "email": "contato@empresa.com",
-  "telefone1": "(11) 99999-9999",
-  "telefone2": "(11) 88888-8888",
+  "telefone1": "(11) 88888-8888",
   "endereco": {
     "cidade": "São Paulo",
-    "bairro": "Centro",
-    "logradouro": "Rua das Flores",
-    "cep": "01234-567",
-    "numero": "123",
-    "complemento": "Sala 100"
+    "bairro": "Vila Madalena",
+    "logradouro": "Av. Paulista",
+    "cep": "01310-100",
+    "numero": "1000"
   }
 }
 ```
 
-**Observação:** O `responsavelTecnicoId` deve ser o ID de uma pessoa física já cadastrada no sistema.
-
-#### PUT /api/PessoaJuridica/{id}
-Atualiza uma pessoa jurídica existente.
-
-#### DELETE /api/PessoaJuridica/{id}
-Remove uma pessoa jurídica.
-
-### Usuário
-
-#### GET /api/Usuario
-Retorna todos os usuários cadastrados.
-
-#### GET /api/Usuario/{id}
-Retorna um usuário específico pelo ID.
-
-#### GET /api/Usuario/pessoas-fisicas
-Retorna uma lista de pessoas físicas disponíveis para associação com usuários.
-
-**Exemplo de resposta:**
+### Criar Usuário
 ```json
-[
-  {
-    "id": 1,
-    "nome": "João Silva",
-    "cpf": "123.456.789-00",
-    "email": "joao@email.com"
-  }
-]
-```
-
-#### GET /api/Usuario/pessoas-juridicas
-Retorna uma lista de pessoas jurídicas disponíveis para associação com usuários.
-
-**Exemplo de resposta:**
-```json
-[
-  {
-    "id": 1,
-    "razaoSocial": "Empresa LTDA",
-    "nomeFantasia": "Empresa",
-    "cnpj": "12.345.678/0001-90",
-    "email": "contato@empresa.com"
-  }
-]
-```
-
-#### POST /api/Usuario
-Cria um novo usuário.
-
-**Exemplo de requisição para Pessoa Física:**
-```json
+POST /api/Usuario
 {
-  "login": "joao.silva",
-  "email": "joao@email.com",
+  "login": "usuario123",
+  "email": "usuario@email.com",
   "senha": "senha123",
   "grupoAcesso": "Administrador",
   "tipoPessoa": "Fisica",
@@ -230,117 +193,88 @@ Cria um novo usuário.
 }
 ```
 
-**Exemplo de requisição para Pessoa Jurídica:**
-```json
-{
-  "login": "empresa.ltda",
-  "email": "contato@empresa.com",
-  "senha": "senha123",
-  "grupoAcesso": "Cliente",
-  "tipoPessoa": "Juridica",
-  "pessoaJuridicaId": 1
-}
+## 🗄️ Configuração do Banco de Dados
+
+### Azure SQL Database
+- **Servidor**: `frademabr.database.windows.net`
+- **Banco**: `frademabr`
+- **Usuário**: `frademabr`
+- **Connection String**: Configurada em `appsettings.json`
+
+### Migrações
+```bash
+# Criar nova migração
+dotnet ef migrations add NomeDaMigracao
+
+# Aplicar migrações
+dotnet ef database update
+
+# Remover última migração
+dotnet ef migrations remove
 ```
 
-#### PUT /api/Usuario/{id}
-Atualiza um usuário existente.
+## 🔧 Configuração do Projeto
 
-#### DELETE /api/Usuario/{id}
-Remove um usuário.
+### App Service
+- **Nome**: `backend-arrighi`
+- **Runtime**: .NET 8
+- **Sistema Operacional**: Linux
+- **Região**: Brazil South
 
-### Endereço
-
-#### GET /api/Endereco
-Retorna todos os endereços cadastrados.
-
-#### GET /api/Endereco/{id}
-Retorna um endereço específico pelo ID.
-
-#### POST /api/Endereco
-Cria um novo endereço.
-
-#### PUT /api/Endereco/{id}
-Atualiza um endereço existente.
-
-#### DELETE /api/Endereco/{id}
-Remove um endereço.
-
-## Configuração do Banco de Dados
-
-A string de conexão está configurada no arquivo `appsettings.json`:
-
+### Variáveis de Ambiente
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=CrmArrighi;Trusted_Connection=true;MultipleActiveResultSets=true"
+    "DefaultConnection": "Server=frademabr.database.windows.net;Database=frademabr;User Id=frademabr;Password=akiko!@#777bBhoho123;TrustServerCertificate=true;MultipleActiveResultSets=true"
   }
 }
 ```
 
-## Migrações
+## 🚀 Execução
 
-Para criar o banco de dados, execute os seguintes comandos:
-
+### Desenvolvimento Local
 ```bash
-dotnet ef migrations add InitialCreate
-dotnet ef database update
-```
+# Restaurar dependências
+dotnet restore
 
-## Executando o Projeto
+# Compilar projeto
+dotnet build
 
-```bash
+# Executar aplicação
 dotnet run
 ```
 
-A API estará disponível em: `https://localhost:7001` ou `http://localhost:5001`
+### Produção
+```bash
+# Publicar para produção
+dotnet publish -c Release
 
-## CORS
+# Executar em produção
+dotnet CadastroPessoas.dll
+```
 
-A API está configurada para aceitar requisições de qualquer origem (CORS), permitindo que o frontend se conecte sem problemas.
+## 🔒 Validações e Restrições
 
-## Validações
+### Índices Únicos
+- **PessoaFisica.Cpf**: CPF deve ser único
+- **PessoaFisica.Email**: Email deve ser único
+- **PessoaJuridica.Cnpj**: CNPJ deve ser único
+- **PessoaJuridica.Email**: Email deve ser único
+- **Usuario.Login**: Login deve ser único
+- **Usuario.Email**: Email deve ser único
 
-- CPF e CNPJ são únicos no sistema
-- E-mails são únicos no sistema
-- Login de usuário é único no sistema
-- Validação de formato de e-mail
-- Campos obrigatórios são validados
-- Relacionamentos entre entidades são mantidos
-- **Responsável Técnico**: Deve ser uma pessoa física já cadastrada no sistema
-- **Exclusão de Pessoa Física**: Não é permitida se ela for responsável técnico de alguma pessoa jurídica
-- **Usuário**: Deve estar associado a uma pessoa física ou jurídica válida
+### Regras de Negócio
+- **Responsável Técnico**: PessoaJuridica deve ter um Responsável Técnico (PessoaFisica)
+- **Exclusão Restrita**: Não é possível excluir PessoaFisica se for Responsável Técnico
+- **Associação de Usuário**: Usuário pode ser associado a PessoaFisica OU PessoaJuridica (não ambos)
+- **Cascade Delete**: Endereco é excluído automaticamente com PessoaFisica/Juridica
 
-## Funcionalidades Implementadas
+## 🌐 CORS
+Configurado para permitir todas as origens, métodos e headers para integração com frontend.
 
-### Pessoa Física
-- ✅ Criar
-- ✅ Editar
-- ✅ Excluir
-- ✅ Listar todas
-- ✅ Buscar por ID
-- ✅ Listar responsáveis técnicos disponíveis
-
-### Pessoa Jurídica
-- ✅ Criar
-- ✅ Editar
-- ✅ Excluir
-- ✅ Listar todas
-- ✅ Buscar por ID
-- ✅ Relacionamento obrigatório com Pessoa Física (Responsável Técnico)
-
-### Usuário
-- ✅ Criar
-- ✅ Editar
-- ✅ Excluir
-- ✅ Listar todos
-- ✅ Buscar por ID
-- ✅ Listar pessoas físicas disponíveis
-- ✅ Listar pessoas jurídicas disponíveis
-- ✅ Associação com Pessoa Física ou Jurídica
-
-### Endereço
-- ✅ Criar
-- ✅ Editar
-- ✅ Excluir
-- ✅ Listar todos
+## 📊 Status do Projeto
+✅ **Concluído**: Todas as funcionalidades implementadas
+✅ **Testado**: Migrações aplicadas com sucesso
+✅ **Produção**: Deployado no Azure App Service
+✅ **Banco de Dados**: Tabelas criadas no Azure SQL Database 
 - ✅ Buscar por ID 

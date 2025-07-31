@@ -1,7 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CrmArrighi.Models
 {
+    [Table("Usuarios")]
     public class Usuario
     {
         public int Id { get; set; }

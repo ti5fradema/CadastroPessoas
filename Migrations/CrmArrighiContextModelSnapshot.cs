@@ -204,6 +204,71 @@ namespace CadastroPessoas.Migrations
                     b.ToTable("PessoasJuridicas");
                 });
 
+            modelBuilder.Entity("CrmArrighi.Models.Usuario", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("GrupoAcesso")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Login")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("PessoaFisicaId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PessoaJuridicaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Senha")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("TipoPessoa")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UltimoAcesso")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("Login")
+                        .IsUnique();
+
+                    b.HasIndex("PessoaFisicaId");
+
+                    b.HasIndex("PessoaJuridicaId");
+
+                    b.ToTable("Usuarios");
+                });
+
             modelBuilder.Entity("CrmArrighi.Models.PessoaFisica", b =>
                 {
                     b.HasOne("CrmArrighi.Models.Endereco", "Endereco")
@@ -232,6 +297,23 @@ namespace CadastroPessoas.Migrations
                     b.Navigation("Endereco");
 
                     b.Navigation("ResponsavelTecnico");
+                });
+
+            modelBuilder.Entity("CrmArrighi.Models.Usuario", b =>
+                {
+                    b.HasOne("CrmArrighi.Models.PessoaFisica", "PessoaFisica")
+                        .WithMany()
+                        .HasForeignKey("PessoaFisicaId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("CrmArrighi.Models.PessoaJuridica", "PessoaJuridica")
+                        .WithMany()
+                        .HasForeignKey("PessoaJuridicaId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("PessoaFisica");
+
+                    b.Navigation("PessoaJuridica");
                 });
 #pragma warning restore 612, 618
         }

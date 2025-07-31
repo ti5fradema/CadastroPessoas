@@ -44,7 +44,28 @@ namespace CrmArrighi.Controllers
         public async Task<ActionResult<IEnumerable<object>>> GetResponsaveisTecnicos()
         {
             var responsaveis = await _context.PessoasFisicas
-                .Select(p => new { p.Id, p.Nome, p.Cpf, p.Email })
+                .Include(p => p.Endereco)
+                .Select(p => new {
+                    p.Id,
+                    p.Nome,
+                    p.Cpf,
+                    p.Email,
+                    p.Sexo,
+                    p.DataNascimento,
+                    p.EstadoCivil,
+                    p.Telefone1,
+                    p.Telefone2,
+                    p.EnderecoId,
+                    Endereco = new {
+                        p.Endereco.Id,
+                        p.Endereco.Cidade,
+                        p.Endereco.Bairro,
+                        p.Endereco.Logradouro,
+                        p.Endereco.Cep,
+                        p.Endereco.Numero,
+                        p.Endereco.Complemento
+                    }
+                })
                 .ToListAsync();
 
             return responsaveis;
@@ -129,4 +150,4 @@ namespace CrmArrighi.Controllers
             return _context.PessoasFisicas.Any(e => e.Id == id);
         }
     }
-} 
+}
